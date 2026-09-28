@@ -14,6 +14,15 @@ The Herdr plugin adds two things to the action menu:
 - **Herd: show fleet** — a popup with every agent whose worktree is on a `herd/*` branch:
   status, commits ahead, last commit. Refreshes every 3 s; `q` closes.
 
+```text
+Herd fleet  16:16:56                                   (demo data)
+
+BUCKET         PANE     STATUS   AHEAD  LAST COMMIT
+darkmode       w3:p2    working  4      feat(theme): persist choice in localStorage
+pricing        w3:p3    done     6      test(pricing): rounding cases
+search         w3:p4    blocked  1      feat(search): debounce query input
+```
+
 ## Install
 
 ```sh
