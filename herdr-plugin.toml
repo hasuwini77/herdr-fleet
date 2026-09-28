@@ -1,0 +1,26 @@
+id = "hasuwini77.fleet"
+name = "Herd Fleet"
+version = "0.12.0"
+min_herdr_version = "0.7.4"
+description = "Parallel bucket builds for Claude Code and Codex: /herd skill installer + a live fleet popup"
+platforms = ["linux", "macos"]
+
+[[actions]]
+id = "install"
+title = "Herd: install skills"
+contexts = ["workspace"]
+command = ["bash", "install.sh"]
+
+[[actions]]
+id = "fleet"
+title = "Herd: show fleet"
+contexts = ["workspace"]
+command = ["bash", "plugin/open-fleet.sh"]
+
+[[panes]]
+id = "fleet"
+title = "Herd fleet"
+placement = "popup"
+width = "80%"
+height = "60%"
+command = ["bash", "plugin/fleet.sh"]
