@@ -30,4 +30,4 @@ You are one **stream** of a `/crew` run — an in-process subagent (or the crew'
 ## Finishing
 - **Never stop to ask.** The stream spec decides; undecidable → finish what is decidable, put the question under `OPEN:`.
 - End with the **report** — labeled lines, ≤ 20 lines, nothing after it:
-  `FILES: <every path you changed, repo-relative>` · `VERIFY: <command> exit=<code> — <last lines>` (one per check) · `OPEN: <questions, or changes needed outside the wall | none>` · `UNVERIFIED: <what you did not check | none>` · then `HERD-DONE <name>` as the very last line, on its own.
+  `FILES: <every path you changed, repo-relative>` · `VERIFY: <command> exit=<code> — <last lines>` (one per check) · `OPEN: <questions, or changes needed outside the wall | none>` · `UNVERIFIED: <what you did not check | none>` · then `FLEET-DONE <name>` as the very last line, on its own.

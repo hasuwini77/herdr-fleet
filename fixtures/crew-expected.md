@@ -16,7 +16,7 @@ writes it first (groundwork commit). The shader question is investigation.
 ## Fit gate
 Two write streams of ~15–25 min each + one scout → `/crew`. Nothing high-risk,
 nothing that needs its own dev server (headless vitest + tsc only; the Playwright
-screenshot is the main pane's after the gate). Not `/herd`: no stream is worth a
+screenshot is the main pane's after the gate). Not `/fleet`: no stream is worth a
 session.
 
 ## Intake questions
@@ -55,7 +55,7 @@ would print "runs as inner sonnet — no Herdr" and proceed.
 > Owned paths (hard boundary — touch nothing outside): /Users/you/Documents/Frontend/app-floor-hud/components/space/floor/FloorLabel.tsx, /Users/you/Documents/Frontend/app-floor-hud/components/space/floor/__tests__/**.
 > Verification (run, capture exit=, quote): `./node_modules/.bin/vitest run --reporter=dot components/space/floor > /tmp/crew-labels-vitest.log 2>&1; echo "vitest exit=$?"; tail -40 /tmp/crew-labels-vitest.log`; `./node_modules/.bin/tsc --noEmit > /tmp/crew-labels-tsc.log 2>&1; echo "tsc exit=$?"; tail -20 /tmp/crew-labels-tsc.log`.
 > Bound: 60 tool calls / 25 min. Tags: ui.
-> Finish with the report (FILES / VERIFY exit= / OPEN / UNVERIFIED, ≤ 20 lines), then `HERD-DONE labels` as the very last line. Never commit, never ask.
+> Finish with the report (FILES / VERIFY exit= / OPEN / UNVERIFIED, ≤ 20 lines), then `FLEET-DONE labels` as the very last line. Never commit, never ask.
 
 ## Rendered — pane stream prompt, `hud` (kind: codex, via `herdr agent prompt hud "…" --wait --until working --timeout 20000`)
 
@@ -68,20 +68,20 @@ Contract path `test -r`'d: `~/.codex/skills/crew/INNER.md`.
 > Owned paths (hard boundary — touch nothing outside): /Users/you/Documents/Frontend/app-floor-hud/components/hud/**.
 > Verification (run, capture exit=, quote): `./node_modules/.bin/vitest run --reporter=dot components/hud > /tmp/crew-hud-vitest.log 2>&1; echo "vitest exit=$?"; tail -40 /tmp/crew-hud-vitest.log`; `./node_modules/.bin/tsc --noEmit > /tmp/crew-hud-tsc.log 2>&1; echo "tsc exit=$?"; tail -20 /tmp/crew-hud-tsc.log`.
 > Bound: 60 tool calls / 25 min. Tags: ui.
-> Finish with the report (FILES / VERIFY exit= / OPEN / UNVERIFIED, ≤ 20 lines), then `HERD-DONE hud` as the very last line. Never commit, never ask.
+> Finish with the report (FILES / VERIFY exit= / OPEN / UNVERIFIED, ≤ 20 lines), then `FLEET-DONE hud` as the very last line. Never commit, never ask.
 
-Watch: `Monitor({command: 'w=$(ls ~/.claude/skills/herd/herd-watch.sh ~/.codex/skills/herd/herd-watch.sh ~/.agents/skills/herd/herd-watch.sh 2>/dev/null | head -1); bash "$w" --follow --timeout 3300 hud:wR:p7', description: 'crew: hud', timeout_ms: 3600000, persistent: false})`.
+Watch: `Monitor({command: 'w=$(ls ~/.claude/skills/fleet/fleet-watch.sh ~/.codex/skills/fleet/fleet-watch.sh ~/.agents/skills/fleet/fleet-watch.sh 2>/dev/null | head -1); bash "$w" --follow --timeout 3300 hud:wR:p7', description: 'crew: hud', timeout_ms: 3600000, persistent: false})`.
 
 ## Codex orchestrator variant
-Same roster. `labels` → `spawn_agent(agent_type="herd-worker")` with the prompt
+Same roster. `labels` → `spawn_agent(agent_type="fleet-worker")` with the prompt
 above (contract path `~/.codex/skills/crew/INNER.md`; a `WORKER-DONE` last line is
-accepted as the marker) → `wait` → `close_agent`. `ripple-perf` → `herd-scout`.
+accepted as the marker) → `wait` → `close_agent`. `ripple-perf` → `fleet-scout`.
 The pane stream is unchanged — it is a Herdr session, not an inner agent.
 
 ## Collect, expected shape
 `labels` returns first → `git -C "$d" diff > /tmp/crew-floor-hud-labels.patch`,
 report read. Scout returns: ANSWER "yes — `uRipple` uniform is updated every
-frame even when the cursor is still" with file:line. Monitor `EVENT hud … marker=HERD-DONE`
+frame even when the cursor is still" with file:line. Monitor `EVENT hud … marker=FLEET-DONE`
 → `herdr agent read hud --source recent-unwrapped --lines 40`. Then, in order:
 union gate `bash "$g" check --bucket crew-floor-hud -- <both owned lists>` (exit 0)
 · attribution (every changed file claimed by a `FILES:` line) · leak check (live

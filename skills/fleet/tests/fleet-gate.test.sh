@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Tests for herd-gate.sh against a throwaway git repo. Run: bash skills/herd/tests/herd-gate.test.sh
+# Tests for fleet-gate.sh against a throwaway git repo. Run: bash skills/fleet/tests/fleet-gate.test.sh
 set -euo pipefail
-gate="$(cd "$(dirname "$0")/.." && pwd)/herd-gate.sh"
+gate="$(cd "$(dirname "$0")/.." && pwd)/fleet-gate.sh"
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
-export HERD_OOB_DIR="$tmp/oob"
+export FLEET_OOB_DIR="$tmp/oob"
 pass=0; fail=0
 ok()  { pass=$((pass+1)); echo "  ok   $1"; }
 bad() { fail=$((fail+1)); echo "  FAIL $1"; }
@@ -35,7 +35,7 @@ expect_exit 1 "oob modify/add/delete" bash "$gate" check --bucket t -- src/owned
 [[ ! -e src/other/new.txt ]] && ok "oob untracked removed" || bad "oob untracked still present"
 [[ -f "src/with space/c.txt" ]] && ok "oob delete restored (path with space)" || bad "oob delete not restored"
 [[ "$(cat src/owned/a.txt)" == $'a\nx' ]] && ok "in-bounds change untouched" || bad "in-bounds change lost"
-d="$(ls -d "$HERD_OOB_DIR"/t-* | head -1)"
+d="$(ls -d "$FLEET_OOB_DIR"/t-* | head -1)"
 [[ -f "$d/changes.patch" && -f "$d/MANIFEST" ]] && ok "patch + manifest written" || bad "patch/manifest missing"
 grep -q $'modified\tsrc/other/b.txt' "$d/MANIFEST" && grep -q $'untracked\tsrc/other/new.txt' "$d/MANIFEST" && grep -q $'deleted\tsrc/with space/c.txt' "$d/MANIFEST" && ok "manifest lists all three kinds" || bad "manifest incomplete: $(cat "$d/MANIFEST")"
 [[ "$(cat "$d/files/src/other/new.txt")" == z && "$(cat "$d/files/src/other/b.txt")" == $'b\ny' ]] && ok "copies preserved" || bad "copies wrong"

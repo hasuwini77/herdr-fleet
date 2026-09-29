@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# herd-gate.sh — the inner diff gate. Run by a herd session around any
+# fleet-gate.sh — the inner diff gate. Run by a fleet session around any
 # write-capable inner agent (Claude `Agent` / Codex `spawn_agent`).
 #
-#   herd-gate.sh baseline
+#   fleet-gate.sh baseline
 #       exit 0  tree clean (safe to start a write-capable inner agent)
 #       exit 2  tree dirty — commit your in-flight work first (list printed)
 #
-#   herd-gate.sh check [--bucket NAME] [--oob-dir DIR] -- <owned-path>...
+#   fleet-gate.sh check [--bucket NAME] [--oob-dir DIR] -- <owned-path>...
 #       exit 0  every change is inside the owned paths
 #       exit 1  out-of-bounds changes were PRESERVED (patch + copies + MANIFEST
 #               under $oob_dir/<bucket>-<utc-ts>/) and then reverted
@@ -33,7 +33,7 @@ case "$cmd" in
   *) usage 2 ;;
 esac
 
-bucket="bucket"; oob_root="${HERD_OOB_DIR:-$HOME/herd-oob}"
+bucket="bucket"; oob_root="${FLEET_OOB_DIR:-$HOME/fleet-oob}"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --bucket) bucket="$2"; shift 2 ;;

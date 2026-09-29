@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# herd-watch.sh — zero-token fleet watcher for /herd.
+# fleet-watch.sh — zero-token fleet watcher for /fleet.
 # Blocks in bash (no model tokens) until a watched agent settles, then reports.
 #
-# Usage: herd-watch.sh [options] <label>:<pane_id> ...
-#   e.g. herd-watch.sh --timeout 900 b1:w3:p2 b2:wR:p3        (label = bucket name)
+# Usage: fleet-watch.sh [options] <label>:<pane_id> ...
+#   e.g. fleet-watch.sh --timeout 900 b1:w3:p2 b2:wR:p3        (label = bucket name)
 #
 #   --interval N    poll `herdr agent list` every N s (default 5)
 #   --timeout N     give up after N s with nothing settled (default 900; exit 3)
@@ -14,14 +14,14 @@
 #   --heartbeat N   seconds between HEARTBEAT lines in --follow (default 900). Under the Monitor
 #                   tool every line wakes the orchestrator for a full turn, so keep these rare —
 #                   the Herdr sidebar already shows liveness; TIMEOUT covers a dead fleet.
-#   --no-marker     skip the HERD-DONE check when an agent settles
+#   --no-marker     skip the FLEET-DONE check when an agent settles
 #
 # Output, one line per event (stdout):
-#   EVENT <label> <pane_id> <old> -> <new> marker=HERD-DONE|none (<n> still working: …)
+#   EVENT <label> <pane_id> <old> -> <new> marker=FLEET-DONE|none (<n> still working: …)
 #   HEARTBEAT <n> working: <labels>          --follow only, periodic
 #   ALL-SETTLED <n> label(s)                 --follow only, then exit 0
 #   TIMEOUT no-settle after <N>s — still working: <labels>     then exit 3
-# `marker=HERD-DONE` means the worker's own `HERD-DONE <label>` line is in its recent output —
+# `marker=FLEET-DONE` means the worker's own `FLEET-DONE <label>` line is in its recent output —
 # a hint that it finished; `marker=none` means read the pane before judging (stopped early?).
 #
 # Exit 0 = settled (one-shot: at least one; --follow: all). Exit 3 = timeout, nothing settled
@@ -47,12 +47,12 @@ while [[ "${1:-}" == --* ]]; do
   esac
 done
 if [[ $# -lt 1 ]]; then
-  echo "usage: herd-watch.sh [--interval N] [--timeout N] [--grace N] [--follow] [--heartbeat N] [--no-marker] <label>:<pane_id> ..." >&2
+  echo "usage: fleet-watch.sh [--interval N] [--timeout N] [--grace N] [--follow] [--heartbeat N] [--no-marker] <label>:<pane_id> ..." >&2
   exit 2
 fi
 
 # Parallel indexed arrays, not associative — macOS ships bash 3.2, which has no `declare -A`,
-# and SKILL.md invokes this as `bash herd-watch.sh`, so the shebang can't rescue us.
+# and SKILL.md invokes this as `bash fleet-watch.sh`, so the shebang can't rescue us.
 labels=()
 panes=()
 states=()
@@ -75,12 +75,12 @@ done
 # focus that flips done -> idle must not fire a second EVENT. Only class changes count.
 cls() { case "$1" in idle|done) echo ok ;; blocked) echo blocked ;; gone) echo gone ;; *) echo busy ;; esac; }
 
-# The worker prints `HERD-DONE <label>` on its own line when it finishes. The prompt that asked
+# The worker prints `FLEET-DONE <label>` on its own line when it finishes. The prompt that asked
 # for it is echoed in the same pane mid-sentence, so anchor at line start (a glyph prefix such as
 # "⏺ " is allowed) to avoid reading the instruction as the marker.
 has_marker() { # $1 = pane, $2 = label
   herdr agent read "$1" --source recent-unwrapped --lines 80 2>/dev/null \
-    | grep -Eq "^[^[:alnum:]]{0,8}HERD-DONE[[:space:]]+$2([[:space:]]|$)"
+    | grep -Eq "^[^[:alnum:]]{0,8}FLEET-DONE[[:space:]]+$2([[:space:]]|$)"
 }
 
 busy_labels() { # prints the labels whose class is busy, space-separated
@@ -117,7 +117,7 @@ while :; do
       if [[ "$newcls" != busy && "$newcls" != "$oldcls" ]]; then
         m=""
         if [[ $marker -eq 1 && "$newcls" == ok ]]; then
-          if has_marker "$pane" "$label"; then m=" marker=HERD-DONE"; else m=" marker=none"; fi
+          if has_marker "$pane" "$label"; then m=" marker=FLEET-DONE"; else m=" marker=none"; fi
         fi
         n="$(busy_count)"; rest="($n still working)"
         (( n > 0 )) && rest="($n still working: $(busy_labels))"

@@ -2,20 +2,20 @@
 
 Parallel builds for Claude Code and Codex on [Herdr](https://herdr.dev).
 
-`/herd <task>` splits a task into **file-disjoint buckets**, starts one agent per bucket
+`/fleet <task>` splits a task into **file-disjoint buckets**, starts one agent per bucket
 in its own Herdr tab and git worktree, watches them with a zero-token bash watcher, then
 reviews, merges and tags them one by one from your main pane. `/crew` is the smaller
 rung: up to 3 in-process subagents in one worktree, one branch, one PR.
 
 The Herdr plugin adds two things to the action menu:
 
-- **Herd: install skills** — links `/herd` and `/crew` into `~/.claude/skills`,
+- **Fleet: install skills** — links `/fleet` and `/crew` into `~/.claude/skills`,
   `~/.codex/skills` and `~/.agents/skills` (symlinks only, never overwrites a real directory).
-- **Herd: show fleet** — a popup with every agent whose worktree is on a `herd/*` branch:
+- **Fleet: show board** — a popup with every agent whose worktree is on a `fleet/*` branch:
   status, commits ahead, last commit. Refreshes every 3 s; `q` closes.
 
 ```text
-Herd fleet  16:16:56                                   (demo data)
+Fleet board  16:16:56                                   (demo data)
 
 BUCKET         PANE     STATUS   AHEAD  LAST COMMIT
 darkmode       w3:p2    working  4      feat(theme): persist choice in localStorage
@@ -42,9 +42,9 @@ Plugin tested with herdr 0.8.2 on Linux (WSL2); the skills also run on macOS.
 2. **Plan.** Each bucket gets a goal, owned paths (a hard wall), a verification command
    and a time budget.
 3. **Ship.** One worker per bucket, started with a short prompt that points at
-   `skills/herd/WORKER.md`, its contract: push after every commit, stay inside owned
-   paths, end with an evidence block and `HERD-DONE <name>` — or `HERD-BLOCKED`.
-4. **Watch.** `herd-watch.sh` reports each worker settling; no model tokens are spent
+   `skills/fleet/WORKER.md`, its contract: push after every commit, stay inside owned
+   paths, end with an evidence block and `FLEET-DONE <name>` — or `FLEET-BLOCKED`.
+4. **Watch.** `fleet-watch.sh` reports each worker settling; no model tokens are spent
    while waiting.
 5. **Merge.** The main pane reviews each branch, re-runs its verification, merges in
    order and tags once everything is on main.
@@ -55,10 +55,10 @@ agent's global instructions.
 ## Tests
 
 ```sh
-bash skills/herd/tests/herd-budget.test.sh   # size budget + contract lint
-bash skills/herd/tests/herd-gate.test.sh
-bash skills/herd/tests/herd-watch.test.sh
-bash plugin/fleet.test.sh
+bash skills/fleet/tests/fleet-budget.test.sh   # size budget + contract lint
+bash skills/fleet/tests/fleet-gate.test.sh
+bash skills/fleet/tests/fleet-watch.test.sh
+bash plugin/board.test.sh
 ```
 
 ## License

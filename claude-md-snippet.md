@@ -1,7 +1,7 @@
 # CLAUDE.md snippet — paste into `~/.claude/CLAUDE.md`
 
 Two sections. **Models & delegation** makes Claude route every fan-out through
-`/crew` (subagents) or Herdr (`/herd`) correctly. **GitHub activity** is the contribution-graph
+`/crew` (subagents) or Herdr (`/fleet`) correctly. **GitHub activity** is the contribution-graph
 law — it decides how work lands (issue → atomic commits → PR → merge commit).
 The supporting lines at the bottom belong in your Verify/Housekeeping sections.
 
@@ -13,15 +13,15 @@ and won't know the two-tier rule.
 
 ## Models & delegation
 Fable 5 = main pane (plan, review, debug) — **never switch the main pane's model**. Sonnet = every implementation agent. Haiku = scouts/grunt (search, investigation, scaffolding) — never for code that ships. Opus = fallback/fast mode.
-- **Two tiers.** Sessions (a real agent in its own Herdr tab/pane + worktree + branch) are the unit of ownership and git — `HERDR_ENV=1` means you're in one; if it isn't 1, say so and ask before any fallback; the `herdr` skill is the CLI syntax authority. Inside a session, **inner agents** (in-process subagents) are allowed for bounded labor: max 3 concurrent, read-only by default (map / scout / self-review), write-capable only when a `/herd` graph declared `inner: split` or a `/crew` roster owns the paths, never commit/branch/push/open tabs, confined to the session's owned paths by `herd-gate.sh`. No Claude Code teammates, no `Workflow` fan-outs, no raw tmux.
-- **Three rungs.** One file, one concern → main pane. **≥2 write-capable subagents about to spawn → `/crew`** — the default, it triggers itself: ≤3 in-process subagents on disjoint paths, one worktree, one branch, one PR, `herd-gate.sh` around them, at most one Herdr pane for a cross-model worker. Any stream ≥ ~30 min, >3 streams, or a stream that needs its own dev server/sim/browser → `/herd` — typed only, never triggered by a bundled prompt. Never nest one in the other. A single quick delegation: one sibling pane.
+- **Two tiers.** Sessions (a real agent in its own Herdr tab/pane + worktree + branch) are the unit of ownership and git — `HERDR_ENV=1` means you're in one; if it isn't 1, say so and ask before any fallback; the `herdr` skill is the CLI syntax authority. Inside a session, **inner agents** (in-process subagents) are allowed for bounded labor: max 3 concurrent, read-only by default (map / scout / self-review), write-capable only when a `/fleet` graph declared `inner: split` or a `/crew` roster owns the paths, never commit/branch/push/open tabs, confined to the session's owned paths by `fleet-gate.sh`. No Claude Code teammates, no `Workflow` fan-outs, no raw tmux.
+- **Three rungs.** One file, one concern → main pane. **≥2 write-capable subagents about to spawn → `/crew`** — the default, it triggers itself: ≤3 in-process subagents on disjoint paths, one worktree, one branch, one PR, `fleet-gate.sh` around them, at most one Herdr pane for a cross-model worker. Any stream ≥ ~30 min, >3 streams, or a stream that needs its own dev server/sim/browser → `/fleet` — typed only, never triggered by a bundled prompt. Never nest one in the other. A single quick delegation: one sibling pane.
 - Freeze the shared contract in the main pane before fanning out; max 3 parallel agents unless I ask for more (each burns the 5h/7d quota). A bucket must be worth ≥ ~30 min of agent work — smaller is a `/crew` stream or the main pane; a session's load overhead never outweighs its work.
-- **Typing it is the go.** `/herd` or `/crew` is the approval: print the graph/roster, spawn, don't ask "go?". Pauses: a high-risk irreversible step, or ≤3 batched intake questions when a real fork exists. Outside those, nothing spawns unless I ask. Claude Code agent teams stay OFF everywhere — `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="0"`, no `teammateMode`: Herdr is the session layer, subagents the labor.
+- **Typing it is the go.** `/fleet` or `/crew` is the approval: print the graph/roster, spawn, don't ask "go?". Pauses: a high-risk irreversible step, or ≤3 batched intake questions when a real fork exists. Outside those, nothing spawns unless I ask. Claude Code agent teams stay OFF everywhere — `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="0"`, no `teammateMode`: Herdr is the session layer, subagents the labor.
 
 ## GitHub activity — the graph is the product
 **Every task on a repo with a GitHub remote runs this exact loop, start to finish, without pausing:**
-1. `gh issue create` — one issue per task (per bucket in `/herd`), **before** any code.
-2. Branch (`feat/<name>`, or `herd/<name>` under `/herd`) → **6–9 atomic commits**, one per logical change (types · schema · component · styles · test · docs · cleanup). **Push after every commit** — unpushed commits count for nothing.
+1. `gh issue create` — one issue per task (per bucket in `/fleet`), **before** any code.
+2. Branch (`feat/<name>`, or `fleet/<name>` under `/fleet`) → **6–9 atomic commits**, one per logical change (types · schema · component · styles · test · docs · cleanup). **Push after every commit** — unpushed commits count for nothing.
 3. `gh pr create` with `Closes #N` in the body.
 4. Merge on green **without asking me**: `gh pr merge --merge --delete-branch`. Then tag (feat → minor, fix → patch).
 
@@ -36,7 +36,7 @@ Fable 5 = main pane (plan, review, debug) — **never switch the main pane's mod
 - Never claim "done" without evidence — test result, build exit code, or a real screenshot (drive UI in Playwright, don't assert from the diff).
 - **Dev-server/worktree cleanup** — `pkill -P $PID` then `kill $PID` (Next.js SWC workers survive a naive kill) → `git worktree remove --force` → verify the dir is gone, else `rm -rf`.
 - **`.gitignore` on first appearance** — worktree dirs, `.env` copies, `.ui-test/`, `.ui-audit/`, `.playwright-mcp/`, `.dev-server.*`, `/*.png`.
-- Nothing idle survives a run: close each `/herd` tab and `/crew` pane the run created; `TaskStop` every inner agent it started.
+- Nothing idle survives a run: close each `/fleet` tab and `/crew` pane the run created; `TaskStop` every inner agent it started.
 
 ---
 

@@ -1,6 +1,6 @@
 # Fixture — sample master prompt
 
-Reference input for `/herd --dry-run`. Re-render after editing `skills/herd/SKILL.md`
+Reference input for `/fleet --dry-run`. Re-render after editing `skills/fleet/SKILL.md`
 and diff against `expected.md` — the graph shape, the `inner:` lines and the
 rendered prompts are the regression surface. Assumes a Next.js app with a
 GitHub remote, `direct-PR` merge mode, Playwright + vitest present.
