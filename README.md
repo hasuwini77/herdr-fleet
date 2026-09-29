@@ -1,4 +1,4 @@
-# herdr-fleet
+# worktree-fleet
 
 Parallel builds for Claude Code and Codex on [Herdr](https://herdr.dev).
 
@@ -26,7 +26,7 @@ search         w3:p4    blocked  1      feat(search): debounce query input
 ## Install
 
 ```sh
-herdr plugin install hasuwini77/herdr-fleet
+herdr plugin install hasuwini77/worktree-fleet
 herdr plugin action invoke hasuwini77.fleet.install
 ```
 
